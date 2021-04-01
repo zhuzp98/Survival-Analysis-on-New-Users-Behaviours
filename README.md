@@ -13,8 +13,6 @@ This Project is a repository for deliverables in STAT 536E at the University of 
    6. 546E_Project.pdf - .pdf version of appendix
    7. report.pdf - Project report.
 
-+ The original data comes from UCI Machine Learning Repository [HCV data Data Set](http://archive.ics.uci.edu/ml/datasets/HCV+data#).
-
 [x] Packages used:
    1. tidyverse
    2. ggfortify
