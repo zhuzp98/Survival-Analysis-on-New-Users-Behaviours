@@ -1,0 +1,150 @@
+---
+title: "Appendix"
+author: "Zhipeng Zhu"
+date: "42737429"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r, message=FALSE, warning=FALSE}
+library(tidyverse)
+library(ggfortify)
+library(MASS)
+library(survival)
+library(lubridate)
+```
+
+# Appendix 
+
+```{r, echo=FALSE}
+data <- read.csv("../data/user_buy0.CSV")
+data <- data %>% mutate(signup_time = ymd_hms(signup_time), 
+                        end_time = ymd_hms(end_time),
+                        test_last_time = ymd_hms(test_last_time),
+                        buy_time = ymd_hms(buy_time),
+                        duration = as.numeric(if_else(have_bought, difftime(buy_time, signup_time, units = "days"), difftime(test_last_time, signup_time, units = "days"))))
+data$have_bought <- as.logical(data$have_bought)
+data1 <- data %>% filter(sex !="")
+```
+
+
+## EDA
+```{r, fig.height=6, fig.width=10, warning=FALSE, message=FALSE}
+data1 %>% ggplot(aes(x = birth_year)) + 
+  geom_histogram() + 
+  theme(axis.text = element_text(size = 20, hjust = 1), 
+        axis.title = element_text(size = 24), 
+        plot.title = element_text(size = 20))
+```
+
+```{r, fig.height=6, fig.width=20}
+data1 %>% group_by(province) %>% 
+	summarise(count = n()) %>% 
+	ggplot(aes(x = reorder(province,(-count)), y = count)) + 
+  geom_bar(stat = 'identity') + 
+  labs(x = "Province", y = "Count") +
+  theme(axis.text = element_text(size = 20, angle = 45, hjust = 1), 
+        axis.title = element_text(size = 24), 
+        plot.title = element_text(size = 20))
+```
+
+```{r, fig.height=6, fig.width=10}
+fitsurv <- survfit(Surv(duration, have_bought) ~ 1, data = data1)
+
+autoplot(fitsurv, fun = "event") + 
+  labs(x = "Time", y = "Transmission rate of purchasing") + 
+  theme(axis.text = element_text(size = 20), 
+        axis.title = element_text(size = 20), 
+        plot.title = element_text(size = 20))
+```
+
+```{r, fig.height=6, fig.width=12}
+fitsurv <- survfit(Surv(duration, have_bought) ~ sex, data = data1)
+
+autoplot(fitsurv, fun='event') + 
+  labs(x = "Time", y = "Transmission rate of purchasing") + 
+  theme(axis.text = element_text(size = 20), 
+        axis.title = element_text(size = 20), 
+        plot.title = element_text(size = 20), 
+        legend.text = element_text(size = 20), 
+        legend.title = element_text(size = 20))
+```
+
+Log-Rank Test
+```{r}
+survdiff(Surv(duration, have_bought) ~ sex, data = data1)
+```
+
+```{r, fig.height=6, fig.width=8}
+data11 <- data1 %>% filter(birth_year %in% c(1970, 1995))
+
+fitsurv <- survfit(Surv(duration, have_bought) ~ birth_year, data = data11)
+
+autoplot(fitsurv, fun='event', conf.int = FALSE) + 
+  labs(x = "Time", y = "Transmission rate of purchasing") + 
+  theme(axis.text = element_text(size = 20), 
+        axis.title = element_text(size = 20), 
+        plot.title = element_text(size = 20), 
+        legend.text = element_text(size = 20), 
+        legend.title = element_text(size = 20), 
+        legend.position="bottom")
+```
+
+Log-Rank Test
+```{r}
+survdiff(Surv(duration, have_bought) ~ birth_year, data = data11)
+```
+
+
+```{r, fig.height=6, fig.width=8}
+data12 <- data1 %>% filter(province %in% c("Guangdong", "Zhejiang"))
+
+fitsurv <- survfit(Surv(duration, have_bought) ~ province, data = data12)
+
+autoplot(fitsurv, fun='event', conf.int = FALSE) + 
+  labs(x = "Time", y = "Transmission rate of purchasing") + 
+  theme(axis.text = element_text(size = 20), 
+        axis.title = element_text(size = 20), 
+        plot.title = element_text(size = 20), 
+        legend.text = element_text(size = 20), 
+        legend.title = element_text(size = 20), 
+        legend.position="bottom")
+```
+
+Log-Rank Test
+```{r}
+survdiff(Surv(duration, have_bought) ~ province, data = data12)
+```
+
+## Cox PH Model
+```{r}
+cox0 <- coxph(Surv(duration, have_bought) ~ sex + birth_year + province, data = data1)
+summary(cox0)
+```
+
+```{r}
+cox1 <- coxph(Surv(duration, have_bought) ~ sex + birth_year, data = data1)
+summary(cox1)
+```
+
+## Aalen's Additive Model
+```{r}
+fit1 <- aareg(Surv(duration, have_bought) ~ sex + birth_year, data = data1)
+
+summary(fit1)
+```
+
+```{r, fig.height=6, fig.width=18}
+autoplot(fit1) + 
+  theme(axis.text = element_text(size = 20), 
+        axis.title = element_text(size = 20), 
+        plot.title = element_text(size = 20), 
+        legend.text = element_text(size = 20), 
+        legend.title = element_text(size = 20), 
+        legend.position="bottom")
+```
+
+
