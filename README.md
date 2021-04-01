@@ -1,8 +1,11 @@
 # STAT 536E Project
 
 ## What is this project? 
-This Project is a repository for deliverables in STAT 536E at the University of British Columbia.
+
 **Survival Analysis on New Users' Behaviours**
+
+This Project is a repository for deliverables in STAT 536E at the University of British Columbia.
+
 
 ## What files are in the project folder / GitHub repository?
 [x] General repository:
