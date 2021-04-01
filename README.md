@@ -1,2 +1,24 @@
-# Survival-Analysis-on-New-Users-Behaviours
-STAT 536E Project
+# STAT 536E Project
+
+## What is this project? 
+
+**Survival Analysis on New Users' Behaviours**
+
+This Project is a repository for deliverables in STAT 536E at the University of British Columbia.
+
+
+## What files are in the project folder / GitHub repository?
+[x] General repository:
+   1. README.md - Summary information for this project.
+   2. 546E_Project.Rmd - Project codes in RMarkdown.
+   3. user_buy0.csv - Filtered data of new users' behaviour in an online shopping platform.
+   5. 546E_Project.md - Github friendly .md file of .Rmd
+   6. 546E_Project.pdf - .pdf version of appendix
+   7. report.pdf - Project report.
+
+[x] Packages used:
+   1. tidyverse
+   2. ggfortify
+   3. MASS
+   4. survival
+   5. lubridate
